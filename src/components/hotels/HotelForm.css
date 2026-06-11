@@ -1,0 +1,595 @@
+/* Hotel Form Styles - Decameron Theme */
+
+:root {
+  --primary-color: #0088cc;
+  --primary-dark: #0066aa;
+  --primary-light: #e8f4f8;
+  --dark-bg: #ffffff;
+  --light-bg: #f5f9fc;
+  --text-color: #2c3e50;
+  --text-light: #7f8c8d;
+  --border-color: #0088cc;
+  --error-color: #e74c3c;
+  --success-color: #27ae60;
+  --border-radius: 12px;
+  --box-shadow: 0 2px 8px rgba(0, 136, 204, 0.1);
+  --box-shadow-hover: 0 4px 16px rgba(0, 136, 204, 0.15);
+}
+
+.hotel-form-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e8f4f8 0%, #f5f9fc 100%);
+  padding: 40px 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.hotel-form {
+  max-width: 900px;
+  margin: 0 auto;
+  background: var(--dark-bg);
+  border: 1px solid #e0e8f0;
+  border-radius: var(--border-radius);
+  padding: 40px;
+  box-shadow: var(--box-shadow);
+}
+
+/* Header */
+.form-header {
+  margin-bottom: 40px;
+  text-align: center;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 20px;
+}
+
+.form-header h1 {
+  color: var(--primary-color);
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Server Error Message */
+.server-error-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(231, 76, 60, 0.08);
+  border: 1px solid var(--error-color);
+  border-radius: var(--border-radius);
+  margin-bottom: 25px;
+  animation: slideIn 0.3s ease;
+}
+
+.server-error-message .error-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.server-error-message .error-content {
+  flex: 1;
+}
+
+.server-error-message strong {
+  color: var(--error-color);
+  font-weight: 700;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.server-error-message p {
+  color: var(--error-color);
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* Form Sections */
+.form-section {
+  margin-bottom: 40px;
+}
+
+.basic-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Form Rows */
+.form-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.form-row .form-group {
+  flex: 1;
+  min-width: 250px;
+}
+
+/* Form Groups */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  color: var(--primary-color);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-group input,
+.form-group select {
+  padding: 12px 16px;
+  background: var(--light-bg);
+  color: var(--text-color);
+  border: 1px solid #e0e8f0;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.form-group input::placeholder,
+.form-group select {
+  color: var(--text-light);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  background: var(--light-bg);
+  box-shadow: 0 0 0 3px rgba(0, 136, 204, 0.1);
+}
+
+.form-group input:disabled,
+.form-group select:disabled {
+  background: #f0f4f8;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-group input.input-error,
+.form-group select.input-error {
+  border-color: var(--error-color);
+}
+
+.error-message {
+  color: var(--error-color);
+  font-size: 0.85rem;
+  font-weight: 500;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Configurations Section */
+.configurations-section {
+  background: var(--primary-light);
+  padding: 25px;
+  border: 1px solid #c5e3f0;
+  border-radius: var(--border-radius);
+}
+
+.configurations-section h2 {
+  color: var(--primary-color);
+  font-size: 1.5rem;
+  margin: 0 0 25px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.config-error-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: rgba(231, 76, 60, 0.08);
+  border: 1px solid var(--error-color);
+  border-radius: var(--border-radius);
+  color: var(--error-color);
+  font-weight: 600;
+  margin-bottom: 20px;
+  animation: slideIn 0.3s ease;
+}
+
+.config-error-message .error-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.config-summary {
+  display: flex;
+  gap: 20px;
+  padding: 15px;
+  background: rgba(0, 136, 204, 0.05);
+  border: 1px solid #b3e0f5;
+  border-radius: var(--border-radius);
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.summary-stat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.summary-label {
+  color: var(--text-light);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.summary-value {
+  color: var(--primary-color);
+  font-size: 1.2rem;
+  font-weight: 700;
+  background: rgba(0, 136, 204, 0.08);
+  padding: 4px 12px;
+  border-radius: 4px;
+  min-width: 40px;
+  text-align: center;
+}
+
+.summary-value.assigned {
+  color: #f39c12;
+}
+
+.summary-value.available {
+  color: var(--success-color);
+}
+
+/* Table */
+.table-wrapper {
+  overflow-x: auto;
+  margin-bottom: 25px;
+  border-radius: var(--border-radius);
+  border: 1px solid #e0e8f0;
+}
+
+.configurations-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--dark-bg);
+}
+
+.configurations-table thead {
+  background: var(--primary-light);
+}
+
+.configurations-table th {
+  color: var(--primary-color);
+  padding: 15px;
+  text-align: left;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.configurations-table td {
+  color: var(--text-color);
+  padding: 15px;
+  border-bottom: 1px solid #e0e8f0;
+}
+
+.configurations-table tbody tr:hover {
+  background: #f8fbfd;
+}
+
+/* Delete Button */
+.btn-delete {
+  background: var(--error-color);
+  color: white;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-delete:hover {
+  background: #c0392b;
+  transform: scale(1.1);
+}
+
+/* Add Configuration Form */
+.add-configuration-form {
+  background: rgba(255, 255, 255, 0.5);
+  padding: 20px;
+  border: 2px dashed #0088cc;
+  border-radius: var(--border-radius);
+  margin-bottom: 20px;
+}
+
+.config-form-row {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.config-form-group {
+  flex: 1;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.config-form-group label {
+  color: var(--primary-color);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.config-form-group input,
+.config-form-group select {
+  padding: 10px 12px;
+  background: var(--light-bg);
+  color: var(--text-color);
+  border: 1px solid #e0e8f0;
+  border-radius: var(--border-radius);
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.config-form-group input:focus,
+.config-form-group select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 136, 204, 0.1);
+}
+
+.config-form-actions {
+  display: flex;
+  gap: 10px;
+  align-self: flex-end;
+}
+
+/* Buttons */
+.btn-add-configuration {
+  width: 100%;
+  padding: 14px;
+  background: var(--light-bg);
+  color: var(--primary-color);
+  border: 2px dashed var(--primary-color);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-add-configuration:hover {
+  background: var(--primary-light);
+  transform: translateY(-2px);
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 120px;
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--box-shadow-hover);
+}
+
+.btn-secondary {
+  background: var(--light-bg);
+  color: var(--text-color);
+  border: 1px solid var(--primary-color);
+}
+
+.btn-secondary:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: var(--box-shadow-hover);
+}
+
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 136, 204, 0.2);
+}
+
+.btn-submit:active {
+  transform: translateY(0);
+}
+
+/* Form Actions */
+.form-actions {
+  margin-top: 40px;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hotel-form {
+    padding: 25px;
+  }
+
+  .form-header h1 {
+    font-size: 2rem;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .form-row .form-group {
+    min-width: 100%;
+  }
+
+  .config-form-row {
+    flex-direction: column;
+  }
+
+  .config-form-group {
+    min-width: 100%;
+  }
+
+  .config-form-actions {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    flex: 1;
+    min-width: auto;
+  }
+
+  .configurations-table {
+    font-size: 0.9rem;
+  }
+
+  .configurations-table th,
+  .configurations-table td {
+    padding: 10px;
+  }
+
+  .configurations-section {
+    padding: 15px;
+  }
+
+  .config-summary {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .summary-stat {
+    justify-content: space-between;
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .hotel-form-container {
+    padding: 15px;
+  }
+
+  .hotel-form {
+    padding: 15px;
+  }
+
+  .form-header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+  }
+
+  .form-header {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+  }
+
+  .form-row {
+    gap: 10px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 10px 12px;
+    font-size: 1rem;
+  }
+
+  .configurations-table {
+    font-size: 0.8rem;
+  }
+
+  .configurations-table th,
+  .configurations-table td {
+    padding: 8px;
+  }
+
+  .btn-delete {
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+  }
+
+  .configurations-section h2 {
+    font-size: 1.2rem;
+  }
+
+  .btn-submit {
+    padding: 12px;
+    font-size: 1rem;
+  }
+}
+
+/* Loading and Disabled States */
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
