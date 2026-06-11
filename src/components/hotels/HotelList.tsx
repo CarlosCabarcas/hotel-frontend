@@ -26,7 +26,7 @@ const getAssignedRooms = (hotel: Hotel) => {
 
 const getPaginationLabel = (hotels?: PaginatedHotels) => {
     if (!hotels?.meta || hotels.meta.total === 0) {
-        return 'Sin registros';
+        return 'Sin registros.';
     }
 
     return `Mostrando ${hotels.meta.from} a ${hotels.meta.to} de ${hotels.meta.total} hoteles`;
