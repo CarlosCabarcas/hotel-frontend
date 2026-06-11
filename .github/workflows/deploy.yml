@@ -1,0 +1,27 @@
+name: Deploy React App (Build on Server)
+
+on:
+  push:
+    branches:
+      - main # Cambia a tu rama principal si es necesario
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # 1. Entrar a la carpeta del proyecto en el servidor
+            cd /var/www/hotel-frontend
+
+            # 2. Descargar los últimos cambios desde GitHub
+            git pull origin main
+
+            # 3. Forzar la compilación de la nueva imagen y levantar el contenedor
+            docker compose up -d --build frontend
