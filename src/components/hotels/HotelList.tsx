@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useDeleteHotel } from '../../hooks/useDeleteHotel';
 import { useHotels } from '../../hooks/useHotels';
 import type { Hotel, PaginatedHotels } from '../../types/hotel';
 import type { HotelConfiguration } from '../../types/hotel-configuration';
+import { showConfirmAlert, showErrorAlert, showSuccessAlert } from '../../utils/alerts';
 import './HotelForm.css';
 import './HotelList.css';
 
@@ -32,7 +34,10 @@ const getPaginationLabel = (hotels?: PaginatedHotels) => {
 
 export const HotelList = () => {
     const [page, setPage] = useState(1);
+    const [deletingHotelId, setDeletingHotelId] = useState<number | null>(null);
+    const [deleteError, setDeleteError] = useState('');
     const { data: hotels, isLoading, isError, isFetching } = useHotels(page);
+    const deleteHotelMutation = useDeleteHotel();
 
     const canGoBack = (hotels?.meta.current_page ?? 1) > 1;
     const canGoForward = (hotels?.meta.current_page ?? 1) < (hotels?.meta.last_page ?? 1);
@@ -46,6 +51,34 @@ export const HotelList = () => {
     const handleNextPage = () => {
         if (canGoForward) {
             setPage((currentPage) => currentPage + 1);
+        }
+    };
+
+    const handleDeleteHotel = async (hotel: Hotel) => {
+        const confirmed = await showConfirmAlert(
+            'Eliminar hotel',
+            `¿Deseas eliminar el hotel ${hotel.name}? Esta acción no se puede deshacer.`
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        setDeleteError('');
+        setDeletingHotelId(hotel.id);
+
+        try {
+            await deleteHotelMutation.mutateAsync(hotel.id);
+            void showSuccessAlert('Hotel eliminado', `${hotel.name} fue eliminado correctamente.`);
+
+            if (hotels?.data.length === 1 && page > 1) {
+                setPage((currentPage) => currentPage - 1);
+            }
+        } catch {
+            setDeleteError('No fue posible eliminar el hotel.');
+            void showErrorAlert('No fue posible eliminar el hotel', 'Intenta nuevamente en unos segundos.');
+        } finally {
+            setDeletingHotelId(null);
         }
     };
 
@@ -68,6 +101,15 @@ export const HotelList = () => {
                         <div className="error-content">
                             <strong>Error en la solicitud</strong>
                             <p>No fue posible cargar el listado de hoteles.</p>
+                        </div>
+                    </div>
+                )}
+
+                {deleteError && (
+                    <div className="server-error-message">
+                        <div className="error-content">
+                            <strong>Error en la solicitud</strong>
+                            <p>{deleteError}</p>
                         </div>
                     </div>
                 )}
@@ -96,7 +138,17 @@ export const HotelList = () => {
                                                 <p>{hotel.city}</p>
                                             </div>
 
-                                            <span className="hotel-card-nit">NIT {hotel.nit}</span>
+                                            <div className="hotel-card-actions">
+                                                <span className="hotel-card-nit">NIT {hotel.nit}</span>
+                                                <button
+                                                    type="button"
+                                                    className="hotel-delete-button"
+                                                    onClick={() => handleDeleteHotel(hotel)}
+                                                    disabled={deletingHotelId === hotel.id}
+                                                >
+                                                    {deletingHotelId === hotel.id ? 'Eliminando' : 'Eliminar'}
+                                                </button>
+                                            </div>
                                         </div>
 
                                         <div className="config-summary hotel-card-summary">

@@ -7,6 +7,7 @@ import { hotelSchema, type HotelFormData } from '../../schemas/hotelSchema';
 import { useRoomTypes } from '../../hooks/useRoomTypes';
 import { useCreateHotel } from '../../hooks/useCreateHotel';
 import type { HotelConfiguration } from '../../types/hotel-configuration';
+import { showSuccessAlert } from '../../utils/alerts';
 import './HotelForm.css';
 
 type ServerErrors = Record<string, string>;
@@ -174,6 +175,7 @@ export const HotelForm = () => {
             setIsAddingConfig(false);
             setConfigError('');
             setSuccessMessage('Hotel creado correctamente');
+            void showSuccessAlert('Hotel creado correctamente', 'El hotel fue guardado con sus configuraciones.');
         } catch (error: unknown) {
             setServerErrors(parseServerErrors(error));
         }

@@ -101,6 +101,34 @@
   font-weight: 700;
 }
 
+.hotel-card-actions {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hotel-delete-button {
+  background: rgba(231, 76, 60, 0.08);
+  color: var(--error-color);
+  border: 1px solid var(--error-color);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  min-width: 96px;
+  padding: 8px 12px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.hotel-delete-button:hover {
+  background: var(--error-color);
+  color: white;
+  transform: translateY(-2px);
+}
+
 .hotel-card-summary {
   margin-bottom: 18px;
 }
@@ -161,8 +189,17 @@
     flex-direction: column;
   }
 
+  .hotel-card-actions {
+    align-items: flex-start;
+    width: 100%;
+  }
+
   .hotel-card-nit {
     width: fit-content;
+  }
+
+  .hotel-delete-button {
+    width: 100%;
   }
 }
 
