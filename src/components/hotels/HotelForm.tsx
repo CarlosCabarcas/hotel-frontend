@@ -11,6 +11,7 @@ import './HotelForm.css';
 
 export const HotelForm = () => {
     const { data: roomTypes = [] } = useRoomTypes();
+    const createHotelMutation = useCreateHotel();
     const [configurations, setConfigurations] = useState<HotelConfiguration[]>([]);
     const [isAddingConfig, setIsAddingConfig] = useState(false);
     const [configError, setConfigError] = useState<string>('');
@@ -62,8 +63,7 @@ export const HotelForm = () => {
         if (
             !newConfig.room_type_id ||
             !newConfig.accommodation_id ||
-            !newConfig.quantity ||
-            isNaN(newConfig.quantity as number)
+            !newConfig.quantity
         ) {
             setConfigError('Todos los campos son obligatorios');
             return;
@@ -95,8 +95,6 @@ export const HotelForm = () => {
         setConfigurations(configurations.filter((_, i) => i !== index));
         setConfigError('');
     };
-
-    const createHotelMutation = useCreateHotel();
 
     const onSubmit = async (data: HotelFormData) => {
         setServerErrors({});

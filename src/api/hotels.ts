@@ -1,11 +1,13 @@
 import { api } from './axios';
-import type { Hotel } from '../types/hotel';
+import type { Hotel, PaginatedHotels } from '../types/hotel';
 
 /**
  * Hotel list
  */
-export const getHotels = async () => {
-    const response = await api.get('/hotels');
+export const getHotels = async (page = 1): Promise<PaginatedHotels> => {
+    const response = await api.get('/hotels', {
+        params: { page },
+    });
 
     return response.data;
 }
