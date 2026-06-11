@@ -123,6 +123,29 @@
   transition: all 0.3s ease;
 }
 
+.hotel-edit-button {
+  background: rgba(0, 136, 204, 0.08);
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  min-width: 96px;
+  padding: 8px 12px;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.hotel-edit-button:hover {
+  background: var(--primary-color);
+  color: white;
+  transform: translateY(-2px);
+}
+
 .hotel-delete-button:hover {
   background: var(--error-color);
   color: white;
@@ -198,6 +221,7 @@
     width: fit-content;
   }
 
+  .hotel-edit-button,
   .hotel-delete-button {
     width: 100%;
   }

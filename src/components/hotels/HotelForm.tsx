@@ -1,17 +1,36 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { hotelSchema, type HotelFormData } from '../../schemas/hotelSchema';
 import { useRoomTypes } from '../../hooks/useRoomTypes';
 import { useCreateHotel } from '../../hooks/useCreateHotel';
+import type { Hotel } from '../../types/hotel';
 import type { HotelConfiguration } from '../../types/hotel-configuration';
 import { showSuccessAlert } from '../../utils/alerts';
 import './HotelForm.css';
 
 type ServerErrors = Record<string, string>;
-type NewConfiguration = Pick<HotelConfiguration, 'room_type_id' | 'accommodation_id' | 'quantity'>;
+type NewConfiguration = {
+    room_type_id: number;
+    accommodation_id: number;
+    quantity: number;
+};
+type FormConfiguration = NewConfiguration & Pick<HotelConfiguration, 'accommodation' | 'id' | 'room_type'>;
+export type HotelPayload = Omit<HotelFormData, 'configurations'> & {
+    configurations: NewConfiguration[];
+};
+
+interface HotelFormProps {
+    initialHotel?: Hotel;
+    isSaving?: boolean;
+    onSubmitHotel?: (payload: HotelPayload) => Promise<unknown>;
+    submitLabel?: string;
+    successMessage?: string;
+    successTitle?: string;
+    title?: string;
+}
 
 const getDefaultNewConfig = (): NewConfiguration => ({
     room_type_id: 0,
@@ -61,14 +80,44 @@ const parseServerErrors = (error: unknown): ServerErrors => {
     };
 };
 
-export const HotelForm = () => {
+const getInitialFormValues = (hotel?: Hotel): HotelFormData => ({
+    name: hotel?.name || '',
+    city: hotel?.city || '',
+    address: hotel?.address || '',
+    nit: hotel?.nit || '',
+    total_rooms: hotel?.total_rooms || 1,
+    configurations: [],
+});
+
+const normalizeConfigurations = (configurations?: HotelConfiguration[]): FormConfiguration[] => {
+    return configurations?.map((configuration) => ({
+        id: configuration.id,
+        room_type_id: configuration.room_type_id ?? configuration.room_type?.id ?? 0,
+        accommodation_id: configuration.accommodation_id ?? configuration.accommodation?.id ?? 0,
+        room_type: configuration.room_type,
+        accommodation: configuration.accommodation,
+        quantity: configuration.quantity,
+    })).filter((configuration) => {
+        return configuration.room_type_id > 0 && configuration.accommodation_id > 0;
+    }) ?? [];
+};
+
+export const HotelForm = ({
+    initialHotel,
+    isSaving,
+    onSubmitHotel,
+    submitLabel = 'Guardar',
+    successMessage = 'Hotel creado correctamente',
+    successTitle = 'Hotel creado correctamente',
+    title = 'Crear Hotel',
+}: HotelFormProps) => {
     const { data: roomTypes = [], isLoading: isLoadingRoomTypes } = useRoomTypes();
     const createHotelMutation = useCreateHotel();
-    const [configurations, setConfigurations] = useState<HotelConfiguration[]>([]);
+    const [configurations, setConfigurations] = useState<FormConfiguration[]>(() => normalizeConfigurations(initialHotel?.configurations));
     const [isAddingConfig, setIsAddingConfig] = useState(false);
     const [configError, setConfigError] = useState<string>('');
     const [serverErrors, setServerErrors] = useState<ServerErrors>({});
-    const [successMessage, setSuccessMessage] = useState('');
+    const [formSuccessMessage, setFormSuccessMessage] = useState('');
     const [newConfig, setNewConfig] = useState<NewConfiguration>(getDefaultNewConfig());
 
     const clearServerError = (field: string) => {
@@ -89,10 +138,18 @@ export const HotelForm = () => {
         watch,
     } = useForm<HotelFormData>({
         resolver: zodResolver(hotelSchema),
-        defaultValues: {
-            configurations: [],
-        },
+        defaultValues: getInitialFormValues(initialHotel),
     });
+
+    useEffect(() => {
+        reset(getInitialFormValues(initialHotel));
+        setConfigurations(normalizeConfigurations(initialHotel?.configurations));
+        setServerErrors({});
+        setConfigError('');
+        setFormSuccessMessage('');
+        setNewConfig(getDefaultNewConfig());
+        setIsAddingConfig(false);
+    }, [initialHotel, reset]);
 
     const total_rooms = watch('total_rooms');
     const assignedRooms = useMemo(() => {
@@ -101,10 +158,10 @@ export const HotelForm = () => {
     const availableRooms = Math.max(0, (total_rooms || 0) - assignedRooms);
     const availableRoomsForNewConfig = Math.max(0, availableRooms + (newConfig.quantity || 0));
     const hasConfigurations = configurations.length > 0;
-    const isSubmitting = createHotelMutation.isPending;
+    const isSubmitting = isSaving ?? createHotelMutation.isPending;
 
     const handleAddConfiguration = () => {
-        setSuccessMessage('');
+        setFormSuccessMessage('');
 
         // Ensure total rooms is defined before assigning room configurations.
         if (!total_rooms || total_rooms <= 0) {
@@ -148,12 +205,12 @@ export const HotelForm = () => {
     const handleRemoveConfiguration = (index: number) => {
         setConfigurations((currentConfigurations) => currentConfigurations.filter((_, i) => i !== index));
         setConfigError('');
-        setSuccessMessage('');
+        setFormSuccessMessage('');
     };
 
     const onSubmit = async (data: HotelFormData) => {
         setServerErrors({});
-        setSuccessMessage('');
+        setFormSuccessMessage('');
 
         if (assignedRooms > data.total_rooms) {
             setConfigError(
@@ -162,32 +219,46 @@ export const HotelForm = () => {
             return;
         }
         
-        const payload = {
+        const payload: HotelPayload = {
             ...data,
-            configurations,
+            configurations: configurations.map((configuration) => ({
+                room_type_id: configuration.room_type_id,
+                accommodation_id: configuration.accommodation_id,
+                quantity: configuration.quantity,
+            })),
         };
 
         try {
-            await createHotelMutation.mutateAsync(payload);
-            reset();
-            setConfigurations([]);
-            setNewConfig(getDefaultNewConfig());
-            setIsAddingConfig(false);
+            if (onSubmitHotel) {
+                await onSubmitHotel(payload);
+            } else {
+                await createHotelMutation.mutateAsync(payload);
+                reset(getInitialFormValues());
+                setConfigurations([]);
+                setNewConfig(getDefaultNewConfig());
+                setIsAddingConfig(false);
+            }
+
             setConfigError('');
-            setSuccessMessage('Hotel creado correctamente');
-            void showSuccessAlert('Hotel creado correctamente', 'El hotel fue guardado con sus configuraciones.');
+            setFormSuccessMessage(successMessage);
+            void showSuccessAlert(successTitle, 'El hotel fue guardado con sus configuraciones.');
         } catch (error: unknown) {
             setServerErrors(parseServerErrors(error));
         }
     };
 
-    const getRoomTypeName = (id: number) => {
-        return roomTypes.find((rt) => rt.id === id)?.name || '';
+    const getRoomTypeName = (configuration: FormConfiguration) => {
+        return roomTypes.find((rt) => rt.id === configuration.room_type_id)?.name
+            || configuration.room_type?.name
+            || '';
     };
 
-    const getAccommodationName = (roomTypeId: number, accId: number) => {
-        const roomType = roomTypes.find((rt) => rt.id === roomTypeId);
-        return roomType?.accommodations.find((a) => a.id === accId)?.name || '';
+    const getAccommodationName = (configuration: FormConfiguration) => {
+        const roomType = roomTypes.find((rt) => rt.id === configuration.room_type_id);
+
+        return roomType?.accommodations.find((a) => a.id === configuration.accommodation_id)?.name
+            || configuration.accommodation?.name
+            || '';
     };
 
     const getAccommodationsByRoomType = (roomTypeId: number) => {
@@ -200,7 +271,7 @@ export const HotelForm = () => {
             <form onSubmit={handleSubmit(onSubmit)} className="hotel-form">
                 <div className="form-header">
                     <div>
-                        <h1>Crear Hotel</h1>
+                        <h1>{title}</h1>
                         <p>Registra los datos básicos y distribuye las habitaciones por tipo y acomodación.</p>
                     </div>
                 </div>
@@ -214,9 +285,9 @@ export const HotelForm = () => {
                     </div>
                 )}
 
-                {successMessage && (
+                {formSuccessMessage && (
                     <div className="success-message">
-                        {successMessage}
+                        {formSuccessMessage}
                     </div>
                 )}
 
@@ -373,14 +444,9 @@ export const HotelForm = () => {
                                 </thead>
                                 <tbody>
                                     {configurations.map((config, index) => (
-                                        <tr key={index}>
-                                            <td>{getRoomTypeName(config.room_type_id)}</td>
-                                            <td>
-                                                {getAccommodationName(
-                                                    config.room_type_id,
-                                                    config.accommodation_id
-                                                )}
-                                            </td>
+                                        <tr key={`${config.room_type_id}-${config.accommodation_id}-${index}`}>
+                                            <td>{getRoomTypeName(config)}</td>
+                                            <td>{getAccommodationName(config)}</td>
                                             <td>{config.quantity}</td>
                                             <td>
                                                 <button
@@ -504,7 +570,7 @@ export const HotelForm = () => {
                             type="button"
                             className="btn-add-configuration"
                             onClick={() => {
-                                setSuccessMessage('');
+                                setFormSuccessMessage('');
                                 setIsAddingConfig(true);
                             }}
                         >
@@ -516,7 +582,7 @@ export const HotelForm = () => {
                 {/* Submit Button */}
                 <div className="form-actions">
                     <button type="submit" className="btn-submit" disabled={isSubmitting}>
-                        {isSubmitting ? 'Guardando...' : 'Guardar'}
+                        {isSubmitting ? 'Guardando...' : submitLabel}
                     </button>
                 </div>
             </form>

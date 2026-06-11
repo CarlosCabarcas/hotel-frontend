@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { CreateHotelPage } from '../pages/CreateHotelPage';
+import { EditHotelPage } from '../pages/EditHotelPage';
 import { HotelListPage } from '../pages/HotelListPage';
 
 export const AppRouter = () => {
@@ -13,6 +14,10 @@ export const AppRouter = () => {
                 <Route
                     path="/hotels/create"
                     element={<CreateHotelPage />}
+                />
+                <Route
+                    path="/hotels/:id/edit"
+                    element={<EditHotelPage />}
                 />
             </Routes>
         </BrowserRouter>

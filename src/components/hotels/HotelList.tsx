@@ -140,6 +140,12 @@ export const HotelList = () => {
 
                                             <div className="hotel-card-actions">
                                                 <span className="hotel-card-nit">NIT {hotel.nit}</span>
+                                                <Link
+                                                    to={`/hotels/${hotel.id}/edit`}
+                                                    className="hotel-edit-button"
+                                                >
+                                                    Editar
+                                                </Link>
                                                 <button
                                                     type="button"
                                                     className="hotel-delete-button"
